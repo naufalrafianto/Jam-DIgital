@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jam Digital Indonesia (WIB, WITA, WIT)</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap");
+
+      body {
+        font-family: "Roboto Mono", monospace;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #000;
+        color: #fff;
+      }
+
+      .clock-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 1200px;
+      }
+
+      .main-time {
+        font-size: 12vw;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .date {
+        font-size: 3vw;
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .timezones {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+      }
+
+      .timezone {
+        text-align: center;
+        font-size: 2vw;
+      }
+
+      .timezone-time {
+        font-size: 5vw;
+      }
+
+      .blinking {
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .main-time {
+          font-size: 18vw;
+        }
+        .date {
+          font-size: 5vw;
+        }
+        .timezone {
+          font-size: 3vw;
+        }
+        .timezone-time {
+          font-size: 7vw;
+        }
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <div class="clock-container">
+      <div class="main-time" id="wib-time"></div>
+      <div class="date" id="local-date"></div>
+      <div class="timezones">
+        <div class="timezone">
+          <div>WIB</div>
+          <div class="timezone-time" id="wib-time-small"></div>
+        </div>
+        <div class="timezone">
+          <div>WITA</div>
+          <div class="timezone-time" id="wita-time"></div>
+        </div>
+        <div class="timezone">
+          <div>WIT</div>
+          <div class="timezone-time" id="wit-time"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function updateClock() {
+        const now = new Date();
+
+        // Update WIB time (main display)
+        const wibTimeElement = $("#wib-time");
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const seconds = String(now.getSeconds()).padStart(2, "0");
+        wibTimeElement.html(
+          `${hours}<span class="blinking">:</span>${minutes}<span class="blinking">:</span>${seconds}`
+        );
+
+        // Update local date
+        const localDateElement = $("#local-date");
+        const options = {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        };
+        localDateElement.text(now.toLocaleDateString("id-ID", options));
+
+        // Update timezone times
+        updateTimezone("Asia/Jakarta", "#wib-time-small");
+        updateTimezone("Asia/Makassar", "#wita-time");
+        updateTimezone("Asia/Jayapura", "#wit-time");
+      }
+
+      function updateTimezone(timezone, elementId) {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString("id-ID", {
+          timeZone: timezone,
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        $(elementId).text(timeString);
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock();
+    </script>
+  </body>
+</html>
